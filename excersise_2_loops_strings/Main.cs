@@ -13,6 +13,7 @@ namespace excersise_2_loops_strings
     {
         public const string Val1 = "1";
         public const string Val2 = "2";
+        public const string Val3 = "3";
         public const string Quit = "0";
     }
 
@@ -78,6 +79,12 @@ namespace excersise_2_loops_strings
                         ui.PressAnyKeyToContinue();
                         break;
 
+                    case MenuHelpers.Val3:
+                        RepeatTenTimes val3 = new RepeatTenTimes(ui);
+                        val3.RunIt();
+                        ui.PressAnyKeyToContinue();
+                        break;
+
                     case MenuHelpers.Quit:
                         exit = true;
                         break;
@@ -99,6 +106,7 @@ namespace excersise_2_loops_strings
             ui.Print(
                 $"{MenuHelpers.Val1}. Calculate movie ticket price for one person {Environment.NewLine}" +
                 $"{MenuHelpers.Val2}. Calculate total price for a group of movie visitors {Environment.NewLine}" +
+                $"{MenuHelpers.Val3}. Repeat ten times {Environment.NewLine}" +
                 $"{MenuHelpers.Quit}. Quit {Environment.NewLine}{Environment.NewLine}");
 
             ui.Print($"Enter choice 0 to {MenuHelpers.Val2}: ");
@@ -106,18 +114,49 @@ namespace excersise_2_loops_strings
 
     }
 
+    class RepeatTenTimes
+    {
+        private ConsoleUI ui;
+        public string? Text { get; set; }
+
+        public void GetText()
+        {
+            ui.Print("Enter an arbitrary piece of text: ");
+            Text = ui.GetInput();
+        }
+
+        public void printText(int repeatXTimes = 10)
+        {
+            if (Text == null || Text.Length == 0) { return; }
+            for (int i = 1; i <= repeatXTimes; i++)
+            {
+                if (i < repeatXTimes)
+                {
+                    ui.Print($"{i}. {Text}, ");
+                }
+                else
+                {
+                    ui.Print($"{i}. {Text}");
+                }
+            }
+            ui.Print(Environment.NewLine);
+        }
+
+        public void RunIt()
+        {
+            GetText();
+            printText();
+        }
+
+        public RepeatTenTimes(ConsoleUI ui)
+        {
+            this.ui = ui;
+            Text = null;
+        }
+    }
+
     class MovieVisitor
     {
-        //To do this, you will use a nested if-statement.It should proceed
-        //as follows:
-        //
-        //    1. The user inputs an age in numbers.
-        //    2. The program converts this from a string to an integer.
-        //    3. The program checks if the person is a youth (under 20 years old).
-        //    4. If the above is true, the program should print: Youth price: 80 SEK.
-        //    5. Otherwise, the program checks if the person is a pensioner (over 64 years old).
-        //    6. If the above is true, the program should print: Pensioner price: 90 SEK.
-        //    7. Otherwise, the program should print: Standard price: 120 SEK.
 
         public int Age { get; set; }
         public int TicketPrice { get; set; }
@@ -164,9 +203,9 @@ namespace excersise_2_loops_strings
             PrintTicketPrice();
         }
 
-        public MovieVisitor(ConsoleUI pUi)
+        public MovieVisitor(ConsoleUI ui)
         {
-            ui = pUi;
+            this.ui = ui;
             TicketPrice = 0;
             AgeCategory = string.Empty;
         }
@@ -216,9 +255,9 @@ namespace excersise_2_loops_strings
             }
         }
 
-        public MovieVisitors(ConsoleUI pUi)
+        public MovieVisitors(ConsoleUI ui)
         {
-            ui = pUi;
+            this.ui = ui;
             movieVisitors = new List<MovieVisitor>();
             TotalCost = 0;
         }
