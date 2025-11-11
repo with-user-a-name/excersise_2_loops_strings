@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
@@ -224,37 +225,60 @@ namespace excersise_2_loops_strings
 
     class MovieVisitor
     {
+        private int _age;
+        private string _ageCategory;
+        private int _ticketPrice;
         private ConsoleUI ui;
 
-        public int Age { get; set; }
-        //TODO 2511102316: Should use enum or class or similar instead of a string for age category.
-        public string AgeCategory { get; set; }
-        public int TicketPrice { get; set; }
+        public int Age
+        {
+            get { return _age; }
+            set
+            {
+                _age = value;
+                if (_age < 5)
+                {
+                    _ticketPrice = 0;
+                    _ageCategory = "Youth";
+                }
+                else if (_age < 20)
+                {
+                    _ticketPrice = 80;
+                    _ageCategory = "Youth";
+                }
+                else if (_age > 100)
+                {
+                    _ticketPrice = 0;
+                    _ageCategory = "Senior";
+                }
+                else if (_age > 64)
+                {
+                    _ticketPrice = 90;
+                    _ageCategory = "Senior";
+                }
+                else
+                {
+                    _ticketPrice = 120;
+                    _ageCategory = "Standard";
+                }
+            }
+        }
+
+        public string AgeCategory
+        {
+            get { return _ageCategory; }
+        }
+
+        public int TicketPrice
+        {
+            get { return _ticketPrice; }
+        }
 
         public MovieVisitor(ConsoleUI ui)
         {
             this.ui = ui;
-            TicketPrice = 0;
-            AgeCategory = string.Empty;
-        }
-
-        public void CalculateTicketPrice()
-        {
-            if (Age < 20)
-            {
-                TicketPrice = 80;
-                AgeCategory = "Youth";
-            }
-            else if (Age > 64)
-            {
-                TicketPrice = 90;
-                AgeCategory = "Senior";
-            }
-            else
-            {
-                TicketPrice = 120;
-                AgeCategory = "Standard";
-            }
+            _ticketPrice = 0;
+            _ageCategory = string.Empty;
         }
 
         public bool GetAge()
@@ -272,7 +296,6 @@ namespace excersise_2_loops_strings
                 ui.Print($"**Error: {e.Message} {Environment.NewLine}");
                 return false;
             }
-            CalculateTicketPrice();
             return true;
         }
 
