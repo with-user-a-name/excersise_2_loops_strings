@@ -23,20 +23,13 @@ namespace excersise_2_loops_strings
 
     public class ConsoleUI
     {
-        public int TopPos { get; set; }
         public int LeftPos { get; set; }
+        public int TopPos { get; set; }
 
-        public void Print(string message)//, string? nl = null)
+        public ConsoleUI()
         {
-            //if (nl == null)
-            //{
-                Console.Write(message);
-            //}
-            //else
-            //{
-            //    Console.WriteLine(message);
-            //}
-
+            TopPos = Console.CursorTop;
+            LeftPos = Console.CursorLeft;
         }
 
         public string GetInput()
@@ -51,33 +44,34 @@ namespace excersise_2_loops_strings
             Console.ReadKey();
         }
 
-        public void SaveCursorPos()
+        public void Print(string message)
         {
-            TopPos = Console.CursorTop;
-            LeftPos = Console.CursorLeft;
+            Console.Write(message);
         }
+
         public void RestoreCursorPos()
         {
             Console.CursorTop = TopPos;
             Console.CursorLeft = LeftPos;
         }
-        public ConsoleUI()
+
+        public void SaveCursorPos()
         {
             TopPos = Console.CursorTop;
             LeftPos = Console.CursorLeft;
         }
-
     }
-
 
 
     internal class Main
     {
         private ConsoleUI ui;
+
         public Main()
         {
             ui = new ConsoleUI();
         }
+
         public void Run()
         {
             bool exit = false;
@@ -142,15 +136,22 @@ namespace excersise_2_loops_strings
 
             ui.Print($"Enter choice 0 to {MenuHelpers.Val2}: ");
         }
-
     }
 
 
     class TheThirdWord
     {
         private ConsoleUI ui;
+
         public string? Sentence { get; set; }
         public string[] WordArray { get; set; }
+
+        public TheThirdWord(ConsoleUI ui)
+        {
+            this.ui = ui;
+            Sentence = null;
+            WordArray = Array.Empty<string>();
+        }
 
         public bool GetSentence()
         {
@@ -174,19 +175,20 @@ namespace excersise_2_loops_strings
                 return;
             ui.Print($"The third word in the sentence is: {WordArray[2]} {Environment.NewLine}");
         }
-
-        public TheThirdWord(ConsoleUI ui)
-        {
-            this.ui = ui;
-            Sentence = null;
-        }
     }
 
 
     class RepeatTenTimes
     {
         private ConsoleUI ui;
+
         public string? Text { get; set; }
+
+        public RepeatTenTimes(ConsoleUI ui)
+        {
+            this.ui = ui;
+            Text = null;
+        }
 
         public void GetText()
         {
@@ -194,7 +196,7 @@ namespace excersise_2_loops_strings
             Text = ui.GetInput();
         }
 
-        public void printText(int repeatXTimes = 10)
+        public void PrintText(int repeatXTimes = 10)
         {
             if (Text == null || Text.Length == 0) { return; }
             for (int i = 1; i <= repeatXTimes; i++)
@@ -214,37 +216,25 @@ namespace excersise_2_loops_strings
         public void RunIt()
         {
             GetText();
-            printText();
-        }
-
-        public RepeatTenTimes(ConsoleUI ui)
-        {
-            this.ui = ui;
-            Text = null;
+            PrintText();
         }
     }
 
+
     class MovieVisitor
     {
+        private ConsoleUI ui;
 
         public int Age { get; set; }
-        public int TicketPrice { get; set; }
         //TODO 2511102316: Should use enum or class or similar instead of a string for age category.
         public string AgeCategory { get; set; }
+        public int TicketPrice { get; set; }
 
-        private ConsoleUI ui;
-        public void GetAge()
+        public MovieVisitor(ConsoleUI ui)
         {
-            ui.Print("Enter the age of the cinema visitor: ");
-            string str = ui.GetInput();
-            //TODO 2511102154: Need to add verification of input here.
-            Age = int.Parse(str);
-            CalculateTicketPrice();
-        }
-
-        public void PrintTicketPrice()
-        {
-            ui.Print($"{AgeCategory} price: {TicketPrice} kr {Environment.NewLine}");
+            this.ui = ui;
+            TicketPrice = 0;
+            AgeCategory = string.Empty;
         }
 
         public void CalculateTicketPrice()
@@ -266,54 +256,42 @@ namespace excersise_2_loops_strings
             }
         }
 
+        public void GetAge()
+        {
+            ui.Print("Enter the age of the cinema visitor: ");
+            string str = ui.GetInput();
+            //TODO 2511102154: Need to add verification of input here.
+            Age = int.Parse(str);
+            CalculateTicketPrice();
+        }
+
+        public void PrintTicketPrice()
+        {
+            ui.Print($"{AgeCategory} price: {TicketPrice} kr {Environment.NewLine}");
+        }
+
         public void RunIt()
         {
             GetAge();
             PrintTicketPrice();
         }
-
-        public MovieVisitor(ConsoleUI ui)
-        {
-            this.ui = ui;
-            TicketPrice = 0;
-            AgeCategory = string.Empty;
-        }
-
     }
+
 
     class MovieVisitors
     {
         private List<MovieVisitor> movieVisitors;
+        private ConsoleUI ui;
 
         public int NrVisitors { get; set; }
         public int TotalCost { get; set; }
-        
-        private ConsoleUI ui;
 
-        public void GetNumberOfVisitors()
+        public MovieVisitors(ConsoleUI ui)
         {
-            ui.Print("Enter number of movie visitors: ");
-            string str = ui.GetInput();
-            //TODO 2511102154: Need to add verification of input here.
-            NrVisitors = int.Parse(str);
+            this.ui = ui;
+            movieVisitors = new List<MovieVisitor>();
+            TotalCost = 0;
         }
-        public void CalculateTotalPriceForMovieVisitors()
-        {
-            foreach (MovieVisitor movieVisitor in movieVisitors)
-            {
-                TotalCost += movieVisitor.TicketPrice;
-            }
-        }
-
-        public void RunIt()
-        {
-            GetNumberOfVisitors();
-            AddMovieVisitors();
-            CalculateTotalPriceForMovieVisitors();
-            ui.Print($"The number of movie visitors are: {movieVisitors.Count} {Environment.NewLine}");
-            ui.Print($"The total cost for the movie visitors: {TotalCost} kr {Environment.NewLine}");
-        }
-
         public void AddMovieVisitors()
         {
             for (int nr = 0; nr < NrVisitors; nr++)
@@ -324,11 +302,29 @@ namespace excersise_2_loops_strings
             }
         }
 
-        public MovieVisitors(ConsoleUI ui)
+        public void CalculateTotalPriceForMovieVisitors()
         {
-            this.ui = ui;
-            movieVisitors = new List<MovieVisitor>();
-            TotalCost = 0;
+            foreach (MovieVisitor movieVisitor in movieVisitors)
+            {
+                TotalCost += movieVisitor.TicketPrice;
+            }
+        }
+
+        public void GetNumberOfVisitors()
+        {
+            ui.Print("Enter number of movie visitors: ");
+            string str = ui.GetInput();
+            //TODO 2511102154: Need to add verification of input here.
+            NrVisitors = int.Parse(str);
+        }
+
+        public void RunIt()
+        {
+            GetNumberOfVisitors();
+            AddMovieVisitors();
+            CalculateTotalPriceForMovieVisitors();
+            ui.Print($"The number of movie visitors are: {movieVisitors.Count} {Environment.NewLine}");
+            ui.Print($"The total cost for the movie visitors: {TotalCost} kr {Environment.NewLine}");
         }
     }
 }
