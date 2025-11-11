@@ -4,7 +4,9 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace excersise_2_loops_strings
 {
@@ -14,12 +16,15 @@ namespace excersise_2_loops_strings
         public const string Val1 = "1";
         public const string Val2 = "2";
         public const string Val3 = "3";
+        public const string Val4 = "4";
         public const string Quit = "0";
     }
 
 
     public class ConsoleUI
     {
+        public int TopPos { get; set; }
+        public int LeftPos { get; set; }
 
         public void Print(string message)//, string? nl = null)
         {
@@ -45,7 +50,26 @@ namespace excersise_2_loops_strings
             Console.Write("Press any key to continue...");
             Console.ReadKey();
         }
+
+        public void SaveCursorPos()
+        {
+            TopPos = Console.CursorTop;
+            LeftPos = Console.CursorLeft;
+        }
+        public void RestoreCursorPos()
+        {
+            Console.CursorTop = TopPos;
+            Console.CursorLeft = LeftPos;
+        }
+        public ConsoleUI()
+        {
+            TopPos = Console.CursorTop;
+            LeftPos = Console.CursorLeft;
+        }
+
     }
+
+
 
     internal class Main
     {
@@ -85,6 +109,12 @@ namespace excersise_2_loops_strings
                         ui.PressAnyKeyToContinue();
                         break;
 
+                    case MenuHelpers.Val4:
+                        TheThirdWord val4 = new TheThirdWord(ui);
+                        val4.RunIt();
+                        ui.PressAnyKeyToContinue();
+                        break;
+
                     case MenuHelpers.Quit:
                         exit = true;
                         break;
@@ -107,12 +137,51 @@ namespace excersise_2_loops_strings
                 $"{MenuHelpers.Val1}. Calculate movie ticket price for one person {Environment.NewLine}" +
                 $"{MenuHelpers.Val2}. Calculate total price for a group of movie visitors {Environment.NewLine}" +
                 $"{MenuHelpers.Val3}. Repeat ten times {Environment.NewLine}" +
+                $"{MenuHelpers.Val4}. The third word {Environment.NewLine}" +
                 $"{MenuHelpers.Quit}. Quit {Environment.NewLine}{Environment.NewLine}");
 
             ui.Print($"Enter choice 0 to {MenuHelpers.Val2}: ");
         }
 
     }
+
+
+    class TheThirdWord
+    {
+        private ConsoleUI ui;
+        public string? Sentence { get; set; }
+        public string[] WordArray { get; set; }
+
+        public bool GetSentence()
+        {
+            WordArray = Array.Empty<string>();
+            Sentence = String.Empty;
+            ui.Print("Enter a sentence that contains at least three words: ");
+            Sentence = Regex.Replace(ui.GetInput(), @"\s+", " ");
+            WordArray = Sentence.Split(' ');
+
+            if (WordArray.Length < 3)
+            {
+                ui.Print($"You only entered {WordArray.Length} words! {Environment.NewLine}");
+                return false;
+            }
+            return true;
+        }
+
+        public void RunIt()
+        {
+            if (!GetSentence())
+                return;
+            ui.Print($"The third word in the sentence is: {WordArray[2]} {Environment.NewLine}");
+        }
+
+        public TheThirdWord(ConsoleUI ui)
+        {
+            this.ui = ui;
+            Sentence = null;
+        }
+    }
+
 
     class RepeatTenTimes
     {
