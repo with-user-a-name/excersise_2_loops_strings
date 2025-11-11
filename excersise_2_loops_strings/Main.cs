@@ -10,14 +10,15 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace excersise_2_loops_strings
 {
-
+    
     public class MenuHelpers
     {
+        public const string Quit = "0";
         public const string Val1 = "1";
         public const string Val2 = "2";
         public const string Val3 = "3";
         public const string Val4 = "4";
-        public const string Quit = "0";
+        public const string MaxVal = Val4;
     }
 
 
@@ -126,7 +127,7 @@ namespace excersise_2_loops_strings
         private void ShowMainMenu()
         {
             ui.Print($"This is the main menu of console application \"{Process.GetCurrentProcess().ProcessName}\".{Environment.NewLine}");
-            ui.Print($"Select a menu item in the menu by entering the corresponding number to the left. {Environment.NewLine}");
+            ui.Print($"Select a menu item in the menu by entering the corresponding number to the left. {Environment.NewLine}{Environment.NewLine}");
             ui.Print(
                 $"{MenuHelpers.Val1}. Calculate movie ticket price for one person {Environment.NewLine}" +
                 $"{MenuHelpers.Val2}. Calculate total price for a group of movie visitors {Environment.NewLine}" +
@@ -134,7 +135,7 @@ namespace excersise_2_loops_strings
                 $"{MenuHelpers.Val4}. The third word {Environment.NewLine}" +
                 $"{MenuHelpers.Quit}. Quit {Environment.NewLine}{Environment.NewLine}");
 
-            ui.Print($"Enter choice 0 to {MenuHelpers.Val2}: ");
+            ui.Print($"Enter choice 0 to {MenuHelpers.MaxVal}: ");
         }
     }
 
@@ -256,13 +257,23 @@ namespace excersise_2_loops_strings
             }
         }
 
-        public void GetAge()
+        public bool GetAge()
         {
             ui.Print("Enter the age of the cinema visitor: ");
             string str = ui.GetInput();
-            //TODO 2511102154: Need to add verification of input here.
-            Age = int.Parse(str);
+            try
+            {
+                Age = int.Parse(str);
+            }
+            catch (Exception e) when (e is ArgumentNullException
+                                   || e is FormatException
+                                   || e is OverflowException)
+            {
+                ui.Print($"**Error: {e.Message} {Environment.NewLine}");
+                return false;
+            }
             CalculateTicketPrice();
+            return true;
         }
 
         public void PrintTicketPrice()
@@ -272,7 +283,8 @@ namespace excersise_2_loops_strings
 
         public void RunIt()
         {
-            GetAge();
+            if (!GetAge())
+                return;
             PrintTicketPrice();
         }
     }
@@ -292,14 +304,16 @@ namespace excersise_2_loops_strings
             movieVisitors = new List<MovieVisitor>();
             TotalCost = 0;
         }
-        public void AddMovieVisitors()
+        public bool AddMovieVisitors()
         {
             for (int nr = 0; nr < NrVisitors; nr++)
             {
                 MovieVisitor movieVisitor = new MovieVisitor(ui);
-                movieVisitor.GetAge();
+                if (!movieVisitor.GetAge())
+                    return false;
                 movieVisitors.Add(movieVisitor);
             }
+            return true;
         }
 
         public void CalculateTotalPriceForMovieVisitors()
@@ -310,18 +324,30 @@ namespace excersise_2_loops_strings
             }
         }
 
-        public void GetNumberOfVisitors()
+        public bool GetNumberOfVisitors()
         {
             ui.Print("Enter number of movie visitors: ");
             string str = ui.GetInput();
-            //TODO 2511102154: Need to add verification of input here.
-            NrVisitors = int.Parse(str);
+            try
+            {
+                NrVisitors = int.Parse(str);
+            }
+            catch (Exception e) when (e is ArgumentNullException
+                                   || e is FormatException
+                                   || e is OverflowException)
+            {
+                ui.Print($"**Error: {e.Message} {Environment.NewLine}");
+                return false;
+            }
+            return true;
         }
 
         public void RunIt()
         {
-            GetNumberOfVisitors();
-            AddMovieVisitors();
+            if (!GetNumberOfVisitors())
+                return;
+            if (!AddMovieVisitors())
+                return;
             CalculateTotalPriceForMovieVisitors();
             ui.Print($"The number of movie visitors are: {movieVisitors.Count} {Environment.NewLine}");
             ui.Print($"The total cost for the movie visitors: {TotalCost} kr {Environment.NewLine}");
